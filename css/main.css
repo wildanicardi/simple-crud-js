@@ -42,3 +42,21 @@ body {
 .showItem {
   display: block;
 }
+.edit-flashcard {
+  border: 0.2rem solid var(--mainGreen);
+  color: var(--mainGreen);
+  background: transparent;
+}
+.edit-flashcard:hover {
+  background: var(--mainGreen);
+  color: var(--mainDark);
+}
+.delete-flashcard {
+  border: 0.2rem solid var(--mainOrange);
+  color: var(--mainOrange);
+  background: transparent;
+}
+.delete-flashcard:hover {
+  background: var(--mainOrange);
+  color: var(--mainDark);
+}
