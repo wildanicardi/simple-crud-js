@@ -1,5 +1,10 @@
 (function () {
+  let id = 1;
+  let data = [];
   const list = document.getElementById("list");
+  const name = document.querySelector('.name');
+  const course = document.querySelector('.course');
+  const author = document.querySelector('.author');
   //check fields and hide submit
   document.addEventListener('DOMContentLoaded', function () {
     const display = new Display();
@@ -10,14 +15,12 @@
   document.getElementById('customer-form').addEventListener('submit', function (event) {
     event.preventDefault();
 
-    const name = this.querySelector('.name');
-    const course = this.querySelector('.course');
-    const author = this.querySelector('.author');
-
-    const customer = new Customer(name.value, course.value, author.value)
-    // console.log(customer);
+    const customer = new Customer(id, name.value, course.value, author.value)
+    data.push(customer);
+    id++;
 
     const display = new Display();
+    // console.log(customer);
 
     display.feedback(customer);
     display.clearFields();
@@ -25,9 +28,27 @@
   //delete
   list.addEventListener('click', function (event) {
     event.preventDefault();
+
     if (event.target.classList.contains('delete-flashcard')) {
-      // console.log(event.target.parentElement.parentElement);
       list.removeChild(event.target.parentElement.parentElement);
+    } else if (event.target.classList.contains("edit-flashcard")) {
+      // delete question
+      let id = event.target.dataset.id;
+      list.removeChild(event.target.parentElement.parentElement);
+      // specific question
+      const tempCustomer = data.filter(function (item) {
+        return item.id === parseInt(id);
+      });
+      // rest data
+
+      let tempData = data.filter(function (item) {
+        return item.id !== parseInt(id);
+      });
+      data = tempData;
+
+      name.value = tempCustomer[0].name;
+      course.value = tempCustomer[0].course;
+      author.value = tempCustomer[0].author;
     }
   })
   //display
@@ -39,14 +60,12 @@
   }
   //check fields
   Display.prototype.checkFields = function () {
-    // console.log(this);
     this.name.addEventListener('blur', this.validateField);
     this.course.addEventListener('blur', this.validateField);
     this.author.addEventListener('blur', this.validateField);
   };
   //validate each fields
   Display.prototype.validateField = function () {
-    // console.log(this);
     if (this.value === '') {
       this.classList.remove("complete");
       this.classList.add("fail");
@@ -68,7 +87,6 @@
     btn.disabled = true;
   };
   Display.prototype.clearFields = function () {
-    // console.log(this);
 
     this.name.value = '';
     this.course.value = '';
@@ -94,7 +112,6 @@
     }, 4000)
   };
   Display.prototype.addCustomer = function (customer) {
-    // console.log(customer.name);
 
     const random = this.getRandom();
     const div = document.createElement('div');
@@ -118,8 +135,8 @@
       </div>
       <div class="flashcard-btn d-flex justify-content-between">
 
-        <a href="#" id="edit-flashcard" class=" btn my-1 btn-success edit-flashcard text-uppercase" data-id="">edit</a>
-        <a href="#" id="delete-flashcard" class=" btn my-1 delete-flashcard text-uppercase">delete</a>
+        <a href="#" id="edit-flashcard" class=" btn my-1 btn-success edit-flashcard text-uppercase" data-id="${customer.id}">edit</a>
+        <a href="#" id="delete-flashcard" class=" btn my-1 delete-flashcard text-uppercase" data-id="${customer.id}">delete</a>
        </div>
     `;
     this.customers.appendChild(div);
@@ -130,7 +147,8 @@
     return random;
   };
   //customer constructor
-  function Customer(name, course, author) {
+  function Customer(id, name, course, author) {
+    this.id = id;
     this.name = name;
     this.course = course;
     this.author = author;
